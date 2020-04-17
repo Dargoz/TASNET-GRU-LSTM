@@ -1,0 +1,54 @@
+# config for training
+trainer:
+  checkpoint: "./models"
+  log_folder: "./log"
+  optimizer: "adam"
+  # lr: 1e-3
+  # lr: 3e-4 #causal config
+  lr: 7.5e-05
+  momentum: 0.9    #you don't need to change the value,it is not used
+  weight_decay: 0  #you don't need to change the value,it is not used
+  num_epoches: 65
+  clip_norm: False   #you don't need to change the value,it is not used
+  cudnnBenchmark: True
+#You need change the model_path and epoch_done in temp when retrain the model
+temp:
+  model_path: 'C:\dev\pythonWorkspace\project\models\TasNET_46_trainloss_-1.5991e+01_valloss_-1.5076e+01.pkl'
+  epoch_done: 46
+
+#parameters for generating data
+data_generator:
+  dataset_base_dir: 'd:\dataset\test'
+  raw_timit_dir: '\TIMIT\data\lisa\data\timit\raw\TIMIT'
+  clean_speech_dir: '\processed_dataset\speech\clean-files'
+  mixed_files_save_path: '\mixed-audio-files'
+  train_save_path: 'C:\dev\pythonWorkspace\SKRIPSI\dataset\speech\mixed-files\train\npz'
+  valid_save_path: 'C:\dev\pythonWorkspace\SKRIPSI\dataset\speech\mixed-files\validation\npz'
+  # test_save_path: '/data/kanwang/TasNET/data/test_input'
+  num_data: 12780  #you don't need to change the value,it is not used
+  sr: 8000
+  N_L: 40   #N_L is set to the number corresponding to 5ms under the given sampling rate
+  len_time: 0.5   #There 2 training stages: first 0.5s and then 4s 
+  is_norm: True   #you don't need to change the value,it is not used
+  trainSetPercentage: 0.8
+
+#Parameters for data loader, you only need to change the train_path_npz and valid_path_npz for different datasets
+dataloader:
+  shuffle: true
+  batch_size: 64
+  drop_last: true
+  train_path_npz: 'D:\dataset\SKRIPSI\dataset\speech\mixed-files\train\npz\0.5'
+  valid_path_npz: 'D:\dataset\SKRIPSI\dataset\speech\mixed-files\validation\npz\0.5'
+  # test_path_npz: '/data/kanwang/TasNET/data/4s_test_input'
+
+#Parameters for test.py 
+test:
+  test_path_npz: 'D:\dataset\test\temp_test'
+  file1: '8-1.wav'    #you don't need to change the value,it is not used
+  file2: '8-2.wav'    #you don't need to change the value,it is not used
+  test_batch_size: 1
+  test_model_path: 'D:\dataset\test\test_model\TasNET_38_trainloss_-1.5819e+01_valloss_-1.5135e+01.pkl'
+  test_save_path: 'D:\dataset\test\test_result\'   #The mix audio and separated audios will be saved in /mix/, /s1/, /s2/ under test_save_path
+  test_load_path: 'D:\dataset\test\'
+  test_len_time: 4   #you don't need to change the value,it is not used
+
