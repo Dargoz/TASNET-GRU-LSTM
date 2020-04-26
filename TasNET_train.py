@@ -22,13 +22,16 @@ def train(args):
 
     train_loader = DataLoader(train_dataset, batch_size=loader_config["batch_size"], shuffle=True,
                               num_workers=4, drop_last=True, pin_memory=True)
-    valid_loader = DataLoader(valid_dataset, batch_size=loader_config["batch_size"], shuffle=True,
+    valid_loader = DataLoader(valid_dataset, batch_size=loader_config["batch_size"], shuffle=False,
                               num_workers=4, drop_last=True, pin_memory=True)
 
-    tasnet = TasNET(batch_size=loader_config["batch_size"])
+    tasnet = TasNET(train_config['rnn_arch'], batch_size=loader_config["batch_size"])
     trainer = TasNET_trainer(tasnet, batch_size=loader_config["batch_size"], **train_config)
-    trainer.run(train_loader, valid_loader)
-    # trainer.rerun(train_loader, valid_loader, temp["model_path"], temp["epoch_done"])
+    
+    if train_config['rerun_mode'] == False:
+        trainer.run(train_loader, valid_loader)
+    else:
+        trainer.rerun(train_loader, valid_loader, temp["model_path"], temp["epoch_done"])
 
 
 if __name__ == '__main__':
@@ -41,5 +44,4 @@ if __name__ == '__main__':
         dest="config",
         help="Location of .yaml configure files for training")
     args = parser.parse_args()
-
     train(args)

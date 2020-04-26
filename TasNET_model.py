@@ -1,27 +1,26 @@
-import torch
+import torch as th
 import torch.nn as nn
 import numpy as np
+import torch
 
 class TasNET(nn.Module):
-    def __init__(self,batch_size,samples=40,features=500, num_layers=2, hidden_size=1000, dropout=0,
+    def __init__(self,rnn_arch,batch_size,samples=40,features=500, num_layers=2, hidden_size=1000, dropout=0,
                  bidirectional=False):
         super(TasNET, self).__init__()
         self.features = features
         self.batch = batch_size
-        self.samples = samples  
+        self.samples = samples
         self.conv1 = nn.Linear(samples,features,bias=False)
         self.conv2 = nn.Linear(samples,features,bias=False)
         self.ReLU = nn.ReLU()
         self.Sigmoid = nn.Sigmoid()
         self.LayerNorm = nn.LayerNorm(features,0)
-        # self.LSTM12 = nn.LSTM(features, hidden_size,num_layers,batch_first=True, 
-        #                 dropout=dropout,bidirectional=bidirectional)
-        # self.LSTM34 = nn.LSTM(2*features, hidden_size,num_layers,batch_first=True, 
-        #                 dropout=dropout,bidirectional=bidirectional)
-        self.GRU12 = nn.GRU(features, hidden_size,num_layers,batch_first=True, 
-                        dropout=dropout,bidirectional=bidirectional)
-        self.GRU34 = nn.GRU(2*features, hidden_size,num_layers,batch_first=True, 
-                        dropout=dropout,bidirectional=bidirectional)
+        
+        self.rnn12 = getattr(nn, rnn_arch)(
+        features, hidden_size, num_layers, batch_first=True, dropout=dropout, bidirectional=bidirectional)
+        self.rnn34 = getattr(nn, rnn_arch)(
+        2*features, hidden_size, num_layers, batch_first=True, dropout=dropout, bidirectional=bidirectional)
+
         self.Linear = nn.Linear(2*features,2*features)
         self.Softmax = nn.Softmax(-1)
         self.reconv = nn.Linear(features,samples,bias=False)
@@ -31,7 +30,6 @@ class TasNET(nn.Module):
         x = x.view(self.batch, -1)
         x = torch.cat((x,x[:,-int(self.samples/2):]),1)
         x = x.unfold(1,self.samples,int(self.samples/2))
-        # print(x.shape)
 
         #Normalize before the Tasnet
         fac = x.std(2)   #(128,100,40)
@@ -48,16 +46,11 @@ class TasNET(nn.Module):
         #Layer norm before LSTM
         x = self.LayerNorm(w)    #(128,100,500)
 
-        #LSTM layers and skip connection
-        # x_LSTM2, _ = self.LSTM12(x,None)
-        # x_LSTM4, _ = self.LSTM34(x_LSTM2,None)
-        # x = torch.add(x_LSTM2, x_LSTM4)
+        #RNN layers and skip connection
+        x_rnn2, _ = self.rnn12(x,None)
+        x_rnn4, _ = self.rnn34(x_rnn2,None)
+        x = th.add(x_rnn2, x_rnn4)
 
-        #GRU layer
-        x_GRU2, _ = self.GRU12(x,None)
-        x_GRU4, _ = self.GRU34(x_GRU2,None)
-        x = torch.add(x_GRU2, x_GRU4)
-        
         #Linear and softmax layers after LSTM
         x = self.Linear(x)          #(128,100,500*2)
         x = x.view(self.batch,-1,2)  #(128,100*500,2)
@@ -82,20 +75,19 @@ class TasNET(nn.Module):
         x2 = x2.narrow(2,0,int(self.samples/2))
         x1 = x1.contiguous().view(self.batch,-1)           #(128,4000)
         x2 = x2.contiguous().view(self.batch,-1)           #(128,4000)
-
         return x1, x2
 
 def test_model():
-    x = torch.FloatTensor(torch.randn(128,100,40))
-    # fac = torch.std(x,2)
-    # fac = fac.view(128,100,1)
-    # print(x[1,1,:])
-    # print(fac.shape)
-    # x = x/fac
-    # print(x.std(2))
-    # x = x*fac
-    # print(x[1,1,:])
-    Tas = TasNET(128)
+    x = th.FloatTensor(th.randn(128,100,40))
+    fac = th.std(x,2)
+    fac = fac.view(128,100,1)
+    print(x[1,1,:])
+    print(fac.shape)
+    x = x/fac
+    print(x.std(2))
+    x = x*fac
+    print(x[1,1,:])
+    Tas = TasNET('LSTM', 128)
     output1, output2=Tas(x)
     #print(output)
     print(output1.size())

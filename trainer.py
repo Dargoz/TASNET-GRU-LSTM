@@ -19,7 +19,9 @@ class TasNET_trainer(object):
                  batch_size,
                  checkpoint="checkpoint",
                  log_folder="./log",
+                 rnn_arch="LSTM",
                  optimizer='radam',
+                 rerun_mode=False,
                  lr=1e-5,
                  momentum=0.9,
                  weight_decay=0,
@@ -28,6 +30,14 @@ class TasNET_trainer(object):
                  sr=8000,
                  cudnnBenchmark=True):
         
+        logger.info('---Experiment Variables---')
+        logger.info('RNN Architecture: '+rnn_arch)
+        logger.info('Batch Size      : '+str(batch_size))
+        logger.info('Optimizer       : '+optimizer)
+        logger.info('--------------------------\n')
+
+        logger.info('Rerun mode: '+str(rerun_mode))
+       
         self.TasNET = TasNET
 
         self.log_folder = log_folder
@@ -43,10 +53,8 @@ class TasNET_trainer(object):
         self.log('Batch size used: '+str(batch_size))
 
         if optimizer == 'radam':
-            self.log('Using RAdam optimizer')
             self.optimizer = RAdam(self.TasNET.parameters(), lr=lr, weight_decay=weight_decay)
         else:
-            self.log('Using Adam optimizer (default)')
             self.optimizer = torch.optim.Adam(
                 self.TasNET.parameters(),
                 lr=lr,
@@ -70,7 +78,7 @@ class TasNET_trainer(object):
             os.makedirs(checkpoint)
             
         torch.backends.cudnn.benchmark=cudnnBenchmark
-        self.log('cudnn benchmark status: '+str(torch.backends.cudnn.benchmark))
+        self.log('cudnn benchmark status: '+str(torch.backends.cudnn.benchmark)+'\n')
 
 
     def SISNR(self, output, target):
