@@ -35,7 +35,7 @@ data_generator:
 #Parameters for data loader, you only need to change the train_path_npz and valid_path_npz for different datasets
 dataloader:
   shuffle: true
-  batch_size: 64
+  batch_size: 128
   drop_last: true
   train_path_npz: 'D:\dataset\SKRIPSI\dataset\speech\mixed-files\train\npz\0.5'
   valid_path_npz: 'D:\dataset\SKRIPSI\dataset\speech\mixed-files\validation\npz\0.5'
@@ -47,7 +47,7 @@ test:
   file1: '8-1.wav'    #you don't need to change the value,it is not used
   file2: '8-2.wav'    #you don't need to change the value,it is not used
   test_batch_size: 1
-  test_model_path: 'D:\dataset\test\test_model\TasNET_38_trainloss_-1.5819e+01_valloss_-1.5135e+01.pkl'
+  test_model_path: 'D:\dataset\test\test_model\TasNET_52_GRU_trainloss_-1.7238e+01_valloss_-1.6349e+01.pkl'
   test_save_path: 'D:\dataset\test\test_result\'   #The mix audio and separated audios will be saved in /mix/, /s1/, /s2/ under test_save_path
   test_load_path: 'D:\dataset\test\'
   test_len_time: 4   #you don't need to change the value,it is not used

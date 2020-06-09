@@ -127,19 +127,19 @@ def test(args):
             wave2 = zero_mean(wave2[:len_mix].numpy())/np.max(wave2[:len_mix].numpy())
 
             #Calculate the SDR with bss tools
-            wave = [wave1,wave2]
-            estimate = np.array(wave)
-            real = [real1,real2]
-            reference = np.array(real)
-            sdr,sir,sar,_ = bss_eval_sources(estimate,reference) 
-            sdr_list.append(np.mean(sdr))
+            # wave = [wave1,wave2]
+            # estimate = np.array(wave)
+            # real = [real1,real2]
+            # reference = np.array(real)
+            # sdr,sir,sar,_ = bss_eval_sources(estimate,reference) 
+            # sdr_list.append(np.mean(sdr))
 
             #Count the number of SDR lower than 5 and calculate the mean SDR
-            if np.mean(sdr) < 5:
-                low +=1
-            num_test += 1
-            tot += sdr
-            mean = np.mean(tot)/(num_test)
+            # if np.mean(sdr) < 5:
+            #     low +=1
+            # num_test += 1
+            # tot += sdr
+            # mean = np.mean(tot)/(num_test)
 
             #NOTE
             #wave1 : result from speaker1
@@ -153,13 +153,13 @@ def test(args):
             librosa.output.write_wav(save_dir1,wave1,sr)
             librosa.output.write_wav(save_dir2,wave2,sr)
             
-            if num_test%2 == 0:
-                logger.info("The current SDR was {}/{}".format(mean, num_test))
-                logger.info("SDR lower than 5 were {}/{}".format(low,num_test))
+            # if num_test%2 == 0:
+            #     logger.info("The current SDR was {}/{}".format(mean, num_test))
+            #     logger.info("SDR lower than 5 were {}/{}".format(low,num_test))
 
     #Print the SDR in the figure
     logger.info("Testing for all {} waves have done!".format(num_test))
-    logger.info("The total mean SDR is {}".format(mean))
+    # logger.info("The total mean SDR is {}".format(mean))
     xData = np.arange(1, len(sdr_list)+1, 1)
     sdr_list.sort()  
     yData = sdr_list
