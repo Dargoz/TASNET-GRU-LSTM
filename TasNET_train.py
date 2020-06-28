@@ -1,7 +1,7 @@
 import pdb
 import argparse
 import time
-from TasNET_model import TasNET
+from TasNET_model_old import TasNET
 from trainer import TasNET_trainer
 from dataset import TasDataset
 from torch.utils.data import DataLoader
@@ -25,7 +25,7 @@ def train(args):
     valid_loader = DataLoader(valid_dataset, batch_size=loader_config["batch_size"], shuffle=False,
                               num_workers=4, drop_last=True, pin_memory=True)
 
-    tasnet = TasNET(train_config['rnn_arch'], batch_size=loader_config["batch_size"])
+    tasnet = TasNET(batch_size=loader_config["batch_size"])
     trainer = TasNET_trainer(tasnet, batch_size=loader_config["batch_size"], **train_config)
     
     if train_config['rerun_mode'] == False:

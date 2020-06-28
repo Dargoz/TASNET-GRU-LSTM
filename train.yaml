@@ -3,11 +3,11 @@ trainer:
   checkpoint: "./models"
   log_folder: "./log"
   rnn_arch: "LSTM"
-  optimizer: "adam"
-  rerun_mode: False
+  optimizer: "radam"
+  rerun_mode: True
   # lr: 1e-3
   # lr: 3e-4 #causal config
-  lr: 3e-4
+  lr: 3.75e-5
   momentum: 0.9    #you don't need to change the value,it is not used
   weight_decay: 0  #you don't need to change the value,it is not used
   num_epoches: 55
@@ -15,10 +15,10 @@ trainer:
   cudnnBenchmark: True
 #You need change the model_path and epoch_done in temp when retrain the model
 temp:
-  model_path: 'C:\dev\pythonWorkspace\TASNET-GRU-LSTM\models\TasNET_52_trainloss_-1.7238e+01_valloss_-1.6349e+01.pkl'
-  epoch_done: 52
+  model_path: 'C:\dev\pythonWorkspace\TASNET-GRU-LSTM\models\TasNET_50_trainloss_-1.9088e+01_valloss_-1.8312e+01.pkl'
+  epoch_done: 50
 
-#parameters for generating data
+#parameters for generating data 
 data_generator:
   dataset_base_dir: 'd:\dataset\test'
   raw_timit_dir: '\TIMIT\data\lisa\data\timit\raw\TIMIT'
@@ -37,7 +37,7 @@ data_generator:
 #Parameters for data loader, you only need to change the train_path_npz and valid_path_npz for different datasets
 dataloader:
   shuffle: true
-  batch_size: 128
+  batch_size: 64
   drop_last: true
   train_path_npz: 'D:\dataset\SKRIPSI\dataset\speech\mixed-files\train\npz\0.5'
   valid_path_npz: 'D:\dataset\SKRIPSI\dataset\speech\mixed-files\validation\npz\0.5'
